@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">My Application3</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="title_activity_home">home</string>
+    <string name="about"><![CDATA[The best channel to Get all the the information related to all Government Exams
+     & study all the topics about Gujarat Government Exams like Maths,English,History,Bhugol,Current Affairs,Gujarati sahitya, Gujarati Grammar,
+      Bandharan,Science etc. We are here to provide world-class education to all the aspirants who are willing to pass the Government exams without
+      any coaching classes. Friends this channel is purely run by the students,of the students,for the students. ]]></string>
+</resources>
