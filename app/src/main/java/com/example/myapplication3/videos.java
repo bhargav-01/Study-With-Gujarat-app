@@ -1,15 +1,17 @@
 package com.example.myapplication3;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.example.myapplication3.ui.home.HomeFragment;
+import androidx.fragment.app.Fragment;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,34 +27,66 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+
+public class videos extends Fragment {
+    private static String playlist;
+    ListView videoslist;
+    public videos() {
+        // Required empty public constructor
+    }
+
+    public videos(String playlist) {
+        this.playlist=playlist;
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    }
 
-
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view= inflater.inflate(R.layout.fragment_videos, container, false);
+        videoslist=view.findViewById(R.id.list);
         QueryUtils q = new QueryUtils();
         q.execute();
+        return view;
     }
 
-    private void updateUi(ArrayList<Youtube_viedo> viedos) {
+    public static String getPlaylist() {
+        return playlist;
+    }
+
+    private void updateUi(ArrayList<Youtube_video> viedos) {
         // Display the earthquake title in the UI
-        ListView videoslist = (ListView) findViewById(R.id.list);
-        viedoesAdepter adepter = new viedoesAdepter(this, viedos);
+
+        final videosAdepter adepter = new videosAdepter(getContext(), viedos);
         videoslist.setAdapter(adepter);
+
+        videoslist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+                Youtube_video youtube_video =adepter.getItem(position);
+                String id=youtube_video.getId();
+                Intent intent = new Intent(getContext(),videoPlayer.class);
+                intent.putExtra("id",id);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
 
-    class QueryUtils extends AsyncTask<URL, Void, ArrayList<Youtube_viedo>> {
-        private static final String Youtube_URL = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=25&playlistId=PLtuE4dPdOBthMVgdKpQLRAPQkUVwU_8TF&key=AIzaSyCGkUWYF0uCkbcxxcwc_Lua8njXVfvLz_U";
-        public  final String LOG_TAG = MainActivity.class.getSimpleName();
+    class QueryUtils extends AsyncTask<URL, Void, ArrayList<Youtube_video>> {
+        private  final String Youtube_URL = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=25&playlistId="+videos.getPlaylist()+"&key=AIzaSyCGkUWYF0uCkbcxxcwc_Lua8njXVfvLz_U";
+//        public  final String LOG_TAG = MainActivity.class.getSimpleName();
 
         @Override
-        protected ArrayList<Youtube_viedo> doInBackground(URL... urls) {
+        protected ArrayList<Youtube_video> doInBackground(URL... urls) {
 
             // Create URL object
             URL url = createUrl(Youtube_URL);
@@ -66,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Extract relevant fields from the JSON response and create an {@link Event} object
-            ArrayList<Youtube_viedo> viedos = extractFeatureFromJson(jsonResponse);
+            ArrayList<Youtube_video> viedos = extractFeatureFromJson(jsonResponse);
 
             // Return the {@link Event} object as the result fo the {@link TsunamiAsyncTask}
             return viedos;
@@ -74,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Youtube_viedo> viedos) {
+        protected void onPostExecute(ArrayList<Youtube_video> viedos) {
             if (viedos.isEmpty() == false) {
 
                 updateUi(viedos);
@@ -89,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 url = new URL(stringUrl);
             } catch (MalformedURLException exception) {
-                Log.e(LOG_TAG, "Error with creating URL", exception);
+//                Log.e(LOG_TAG, "Error with creating URL", exception);
                 return null;
             }
             return url;
@@ -120,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                     inputStream = urlConnection.getInputStream();
                     jsonResponse = readFromStream(inputStream);
                 } else {
-                    Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+//                    Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
                 }
 
             } catch (IOException e) {
@@ -151,16 +185,9 @@ public class MainActivity extends AppCompatActivity {
             return output.toString();
         }
 
-         ArrayList<Youtube_viedo> extractFeatureFromJson(String jsonResponse) {
+        ArrayList<Youtube_video> extractFeatureFromJson(String jsonResponse) {
 
-
-            // Perform HTTP request to the URL and receive a JSON response back
-
-
-            // Extract relevant fields from the JSON response and create an {@link Event} object
-
-
-            ArrayList<Youtube_viedo> viedos = new ArrayList<>();
+            ArrayList<Youtube_video> viedos = new ArrayList<>();
             if (jsonResponse.equals("")) {
                 return null;
 
@@ -188,12 +215,11 @@ public class MainActivity extends AppCompatActivity {
                         String id = snippet.getJSONObject("resourceId").getString("videoId");
                         System.out.println(id);
                         // Create a new {@link Event} object
-                        viedos.add(new Youtube_viedo(title, a, id));
+                        viedos.add(new Youtube_video(title, a, id));
                     }
 
                 }
             } catch (JSONException e) {
-                Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
             }
             return viedos;
         }

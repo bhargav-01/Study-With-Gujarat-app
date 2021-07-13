@@ -2,6 +2,10 @@ package com.example.myapplication3;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,22 +16,22 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
-public class viedoPlayer extends YouTubeBaseActivity {
- public  String id;
- private YouTubePlayerView youTubePlayerView;
- private  YouTubePlayer player;
- private  Button button;
+public class videoPlayer extends YouTubeBaseActivity {
+    public  String id;
+    private YouTubePlayerView youTubePlayerView;
+    private  YouTubePlayer player;
+    private  Button button;
     YouTubePlayer.OnInitializedListener onInitializedListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_viedo_player);
+        setContentView(R.layout.activity_video_player);
         Intent i=getIntent();
         Bundle b=i.getExtras();
         id=b.getString("id");
 
         youTubePlayerView=(YouTubePlayerView)findViewById(R.id.youtube);
-         //button=(Button)findViewById(R.id.button);
+        //button=(Button)findViewById(R.id.button);
 
         onInitializedListener=new YouTubePlayer.OnInitializedListener() {
             @Override
@@ -51,12 +55,6 @@ public class viedoPlayer extends YouTubeBaseActivity {
         };
 
 
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                youTubePlayerView.initialize(Youtube_key.getApi_key(),onInitializedListener);
-//            }
-//        });
         youTubePlayerView.initialize(Youtube_key.getApi_key(),onInitializedListener);
     }
 }
